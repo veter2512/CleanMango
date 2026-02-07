@@ -8,7 +8,7 @@ Made with love by **veter** for **nix**
 
 ## 📥 Установка
 
-1. Скачай архив `CleanMango.zip` из [Releases](https://github.com/твой_ник/CleanMango/releases)
+1. Скачай архив `CleanMango.zip` из [Releases](https://github.com/veter2512/CleanMango/releases)
 2. Распакуй архив в любую папку
 3. Открой в браузере:
    - Chrome: `chrome://extensions/`
