@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f7;
+      --text-primary: #1d1d1f;
+      --text-secondary: #86868b;
+      --border: #d2d2d7;
+      --accent: #0071e3;
+      --success: #34c759;
+      --danger: #ff3b30;
+    }
+    
+    body.dark {
+      --bg-primary: #000000;
+      --bg-secondary: #1c1c1e;
+      --text-primary: #f5f5f7;
+      --text-secondary: #98989d;
+      --border: #38383a;
+      --accent: #0a84ff;
+      --success: #30d158;
+      --danger: #ff453a;
+    }
+    
+    body {
+      width: 380px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: all 0.3s;
+    }
+
+    .header {
+      padding: 16px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .toggle-section {
+      padding: 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .master-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .master-toggle span {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .switch {
+      position: relative;
+      width: 51px;
+      height: 31px;
+    }
+
+    .switch input { 
+      opacity: 0; 
+      width: 0; 
+      height: 0; 
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0;
+      background: var(--border);
+      transition: .3s;
+      border-radius: 31px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 27px;
+      width: 27px;
+      left: 2px;
+      bottom: 2px;
+      background: white;
+      transition: .3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    input:checked + .slider {
+      background: var(--success);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .status.active {
+      color: var(--success);
+      font-weight: 500;
+    }
+
+    .presets {
+      padding: 20px;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .presets h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .preset-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border: none;
+      color: var(--text-primary);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preset-btn:hover {
+      transform: translateX(4px);
+    }
+
+    .preset-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .preset-btn[data-preset="factory"] {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .preset-btn[data-preset="factory"]:hover {
+      background: #ffdddd;
+      color: var(--danger);
+    }
+
+    .preset-btn[data-preset="factory"].active {
+      background: var(--danger);
+      color: white;
+    }
+
+    .preset-desc {
+      font-size: 12px;
+      font-weight: 400;
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+
+    .save-preset-container {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .save-preset-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .save-preset-btn {
+      padding: 8px 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .tabs {
+      display: flex;
+      padding: 0 20px;
+      gap: 8px;
+      background: var(--bg-primary);
+      padding-top: 16px;
+    }
+    
+    .tab {
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    
+    .tab.active {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    .controls {
+      padding: 20px;
+      background: var(--bg-secondary);
+      display: none;
+    }
+    
+    .controls.active {
+      display: block;
+    }
+
+    .control {
+      margin-bottom: 24px;
+    }
+
+    .control:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .control-name {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .control-value {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .control-value.muted {
+      color: var(--danger);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      border: 0.5px solid rgba(0,0,0,0.04);
+    }
+    
+    .mute-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px;
+      background: var(--bg-primary);
+      border-radius: 6px;
+    }
+    
+    .mute-checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+    
+    .mute-checkbox label {
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <strong style="font-size: 16px;">CleanMango</strong>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">with love by veter</div>
+    </div>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+  </div>
+
+  <div class="toggle-section">
+    <div class="master-toggle">
+      <span>Включить обработку</span>
+      <label class="switch">
+        <input type="checkbox" id="masterToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="status" id="status">Выключено</div>
+  </div>
+
+  <div class="presets">
+    <h3>Пресеты</h3>
+    <div class="preset-grid">
+      <button class="preset-btn" data-preset="soft">
+        <div>Чистая игра</div>
+        <div class="preset-desc">Голоса тише на 40 дБ</div>
+      </button>
+      <button class="preset-btn" data-preset="aggressive">
+        <div>Полное удаление</div>
+        <div class="preset-desc">Mute Mid - только игра</div>
+      </button>
+      <button class="preset-btn" data-preset="factory">
+        <div>Сбросить настройки</div>
+        <div class="preset-desc">Вернуть заводские значения</div>
+      </button>
+      <button class="preset-btn" data-preset="custom" id="customPresetBtn" style="display:none;">
+        <div id="customPresetName">Мой пресет</div>
+        <div class="preset-desc">Сохраненные настройки</div>
+      </button>
+    </div>
+    <div class="save-preset-container">
+      <input type="text" class="save-preset-input" id="presetNameInput" placeholder="Название пресета">
+      <button class="save-preset-btn" id="savePresetBtn">Сохранить</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="basic">Основное</button>
+    <button class="tab" data-tab="advanced">Продвинутое</button>
+    <button class="tab" data-tab="quality">Качество</button>
+  </div>
+
+  <div class="controls active" id="basicTab">
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Подавление голоса</span>
+        <span class="control-value" id="voiceValue">0 дБ</span>
+      </div>
+      <input type="range" id="voiceGain" min="-60" max="0" value="0" step="1">
+      <div class="mute-checkbox">
+        <input type="checkbox" id="muteMid">
+        <label for="muteMid">Полностью заглушить центр (Mute Mid)</label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Усиление игры</span>
+        <span class="control-value" id="gameValue">0 дБ</span>
+      </div>
+      <input type="range" id="gameGain" min="-10" max="15" value="0" step="0.5">
+    </div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Низкие частоты</span>
+        <span class="control-value" id="bassValue">0 дБ</span>
+      </div>
+      <input type="range" id="bassGain" min="-6" max="12" value="0" step="0.5">
+    </div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Высокие частоты</span>
+        <span class="control-value" id="clarityValue">0 дБ</span>
+      </div>
+      <input type="range" id="clarityGain" min="-6" max="12" value="0" step="0.5">
+    </div>
+  </div>
+
+  <div class="controls" id="advancedTab">
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Spectral Gate</span>
+        <span class="control-value" id="spectralValue">0%</span>
+      </div>
+      <input type="range" id="spectralGate" min="0" max="100" value="0" step="5">
+    </div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Adaptive Mode</span>
+        <span class="control-value" id="adaptiveValue">Выкл</span>
+      </div>
+      <input type="range" id="adaptiveMode" min="0" max="1" value="0" step="1">
+    </div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Reverb Removal</span>
+        <span class="control-value" id="reverbValue">0%</span>
+      </div>
+      <input type="range" id="reverbRemoval" min="0" max="100" value="0" step="5">
+    </div>
+  </div>
+
+  <div class="controls" id="qualityTab">
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">De-Esser</span>
+        <span class="control-value" id="deesserValue">0%</span>
+      </div>
+      <input type="range" id="deesser" min="0" max="100" value="0" step="5">
+    </div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Multiband Comp</span>
+        <span class="control-value" id="multibandValue">Выкл</span>
+      </div>
+      <input type="range" id="multiband" min="0" max="1" value="0" step="1">
+    </div>
+
+    <div class="control">
+      <div class="control-label">
+        <span class="control-name">Loudness Norm</span>
+        <span class="control-value" id="loudnessValue">Выкл</span>
+      </div>
+      <input type="range" id="loudness" min="0" max="1" value="0" step="1">
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

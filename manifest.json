@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "CleanMango",
+  "version": "2.0",
+  "description": "Audio cleanup for Nix • with love by veter",
+  "permissions": ["storage", "scripting"],
+  "host_permissions": ["*://*.twitch.tv/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",  
+      "128": "icon.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["injected.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
